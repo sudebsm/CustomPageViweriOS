@@ -16,38 +16,41 @@ class MainViewColtroller: UIViewController  {
     var arrName = [String]()
     var arrButton = [UIButton]()
 
-    var arrPage = [UIViewController]() {
-        didSet{
-            
-            if arrPage.count > 0{
-            let button = UIButton()
-            button.setTitle(arrName[arrPage.count - 1], for: .normal)
-            button.backgroundColor = UIColor.blue
-            button.tag = arrPage.count - 1
-            button.addTarget(self,action:#selector(buttonClicked), for:.touchUpInside)
- 
-                button.setBackgroundColor(  UIColor.lightGray, for: .normal)
-                button.setBackgroundColor(  UIColor.darkGray  , for: .selected)
- 
-            stackView!.alignment = .fill
-            stackView!.distribution = .fillEqually
-            stackView!.spacing = 0
-            stackView!.translatesAutoresizingMaskIntoConstraints = false
-            stackView!.addArrangedSubview(button)
-                
-            arrButton.append(button)
-            }
-        }
-        
-        
-    }
+    var arrPage = [UIViewController]()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        stackView?.updateConstraints()
+
         configurePageViwer()
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        stackView?.updateConstraints()
+    }
+    
+    func updateStackView(){
+        if arrPage.count > 0{
+                   let button = UIButton()
+                   button.setTitle(arrName[arrPage.count - 1], for: .normal)
+                   button.backgroundColor = UIColor.blue
+                   button.tag = arrPage.count - 1
+                   button.addTarget(self,action:#selector(buttonClicked), for:.touchUpInside)
+        
+                       button.setBackgroundColor(  UIColor.lightGray, for: .normal)
+                       button.setBackgroundColor(  UIColor.darkGray  , for: .selected)
+        
+                   stackView!.alignment = .fill
+                   stackView!.distribution = .fillEqually
+                   stackView!.spacing = 0
+                   stackView!.translatesAutoresizingMaskIntoConstraints = false
+                   stackView!.addArrangedSubview(button)
+                       
+                   arrButton.append(button)
+                   }
     }
     
     
@@ -60,13 +63,14 @@ class MainViewColtroller: UIViewController  {
         arrName.append("First Page")
 
         arrPage.append(page1)
-        
+        updateStackView()
         let page2 =   self.storyboard?.instantiateViewController(withIdentifier: "SecondVC") as! SecondVC
         arrName.append("Second Page")
 
         arrPage.append(page2)
+        updateStackView()
+        stackView?.updateConstraints()
         selectedIndex(visibleIndex: 0)
-        
     }
     
     
@@ -86,7 +90,7 @@ class MainViewColtroller: UIViewController  {
         lbl.frame = arrButton[visibleIndex].frame
         lbl.tag = 90908
         lbl.backgroundColor = .yellow
-        lbl.frame = CGRect(x: Int(lbl.bounds.origin.x) , y: Int((stackView!.frame.origin.y + stackView!.frame.size.height) - 4), width: Int( Int(stackView!.frame.width) / arrButton.count) , height: 4)
+        lbl.frame = CGRect(x: Int(lbl.bounds.origin.x) , y: Int((stackView!.frame.origin.y + stackView!.frame.size.height) - 4), width: Int( Int(view!.frame.width - 20 ) / arrButton.count) , height: 4)
         arrButton[visibleIndex].addSubview(lbl)
  
         stackView!.bringSubviewToFront(arrButton[visibleIndex])
